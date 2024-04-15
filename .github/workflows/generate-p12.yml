@@ -30,6 +30,7 @@ jobs:
           # download file
           wget -O file.zip "$url"
           unzip -qo file.zip && rm -f file.zip
+          chmod 600 private.key $(ls *.cer| head -n 1)
           ls -a;
           echo "openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas";
           [[ -f private.key ]] && openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas
