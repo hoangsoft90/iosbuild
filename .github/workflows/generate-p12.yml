@@ -39,8 +39,8 @@ jobs:
           openssl x509 -inform der -in $cerf -out ios_distribution.pem
           cerf=$(ls *.pem| head -n 1)
           # verify
-          openssl rsa -in private.key -check
-          openssl x509 -in $cerf -text -noout
+          #openssl rsa -in private.key -check
+          #openssl x509 -in $cerf -text -noout
           #ls -a;
           #echo "openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas";
           [[ -f private.key ]] && openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $cerf -passout pass:$pas
