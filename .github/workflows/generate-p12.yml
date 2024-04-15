@@ -33,11 +33,11 @@ jobs:
           cerf=$(ls *.cer| head -n 1)
 
           chmod 600 private.key $cerf
-          
+          openssl -v
           # verify
           openssl rsa -in private.key -check
           openssl x509 -in $cerf -text -noout
-          ls -a;
+          #ls -a;
           #echo "openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas";
           [[ -f private.key ]] && openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $cerf -passout pass:$pas
 
