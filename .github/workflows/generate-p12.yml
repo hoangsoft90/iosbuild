@@ -27,8 +27,8 @@ jobs:
           url="${{ github.event.inputs.url }}"
           pas="${{ github.event.inputs.password }}"
 
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew upgrade openssl
+          #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          #brew upgrade openssl
           
           # download file
           wget -O file.zip "$url"
@@ -36,7 +36,8 @@ jobs:
           cerf=$(ls *.cer| head -n 1)
 
           chmod 600 private.key $cerf
-          #openssl -v
+          openssl x509 -inform der -in $cerf -out ios_distribution.pem
+          cerf=$(ls *.pem| head -n 1)
           # verify
           openssl rsa -in private.key -check
           openssl x509 -in $cerf -text -noout
