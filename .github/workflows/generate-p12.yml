@@ -36,7 +36,7 @@ jobs:
           cerf=$(ls *.cer| head -n 1)
 
           chmod 600 private.key $cerf
-          openssl -v
+          #openssl -v
           # verify
           openssl rsa -in private.key -check
           openssl x509 -in $cerf -text -noout
