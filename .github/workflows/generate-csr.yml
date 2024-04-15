@@ -1,0 +1,37 @@
+name: Generate CSR
+
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        description: 'Token'
+        required: false
+      
+jobs:
+  generate_csr:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate CSR
+        env:
+          TELE_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELE_CHATID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Set your info
+          PASSWORD=$(openssl rand -hex 6)
+          DOMAIN_NAME=$(openssl rand -hex 4)
+          DOMAIN_EXTENSIONS=("com" "net" "org" "info" "io" "co" "xyz")
+          RANDOM_EXTENSION=${DOMAIN_EXTENSIONS[$RANDOM % ${#DOMAIN_EXTENSIONS[@]}]}
+          DOMAIN="$DOMAIN_NAME.$RANDOM_EXTENSION"
+
+          openssl req -new -newkey rsa:2048 -nodes -keyout private.key -out request.csr \
+          -passout "pass:$PASSWORD" \
+          -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=$DOMAIN/emailAddress=admin@$DOMAIN"
+
+          # send to telegram
+          curl -F chat_id="$TELE_CHATID" -F document=@private.key "https://api.telegram.org/bot$TELE_TOKEN/sendDocument";
+          curl -F chat_id="$TELE_CHATID" -F document=@request.csr "https://api.telegram.org/bot$TELE_TOKEN/sendDocument";
+          curl -s -X POST "https://api.telegram.org/bot$TELE_TOKEN/sendMessage" -d "chat_id=$TELE_CHATID" -d "text=$PASSWORD"
