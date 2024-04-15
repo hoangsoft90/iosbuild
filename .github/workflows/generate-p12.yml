@@ -31,7 +31,7 @@ jobs:
           wget -O file.zip "$url"
           unzip -qo file.zip && rm -f file.zip
 
-          [[ -f private.key ]] && openssl pkcs12 -export -legacy -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas
+          [[ -f private.key ]] && openssl pkcs12 -export -out certificate.p12 -inkey private.key -in $(ls *.cer| head -n 1) -passout pass:$pas
 
           # send to telegram
           [[ -f private.key ]] && curl -F chat_id="$TELE_CHATID" -F document=@certificate.p12 "https://api.telegram.org/bot$TELE_TOKEN/sendDocument" || curl -s -X POST "https://api.telegram.org/bot$TELE_TOKEN/sendMessage" -d "chat_id=$TELE_CHATID" -d "text=failed-generate-certificate.p12";
